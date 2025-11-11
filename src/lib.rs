@@ -125,7 +125,7 @@ pub trait Amm {
     /// Heavy deserialization and precomputation caching should be done in this function
     fn update(&mut self, account_map: &AccountMap) -> Result<()>;
 
-    fn quote(&self, quote_params: &QuoteParams) -> Result<Quote>;
+    fn quote(&mut self, quote_params: &QuoteParams) -> Result<Quote>;
 
     /// Indicates which Swap has to be performed along with all the necessary account metas
     fn get_swap_and_account_metas(&self, swap_params: &SwapParams) -> Result<SwapAndAccountMetas>;
@@ -144,8 +144,6 @@ pub trait Amm {
     fn supports_exact_out(&self) -> bool {
         false
     }
-
-    fn clone_amm(&self) -> Box<dyn Amm + Send + Sync>;
 
     /// It can only trade in one direction from its first mint to second mint, assuming it is a two mint AMM
     fn unidirectional(&self) -> bool {
@@ -174,12 +172,6 @@ pub trait Amm {
     /// If the market is active at all
     fn is_active(&self) -> bool {
         true
-    }
-}
-
-impl Clone for Box<dyn Amm + Send + Sync> {
-    fn clone(&self) -> Box<dyn Amm + Send + Sync> {
-        self.clone_amm()
     }
 }
 
